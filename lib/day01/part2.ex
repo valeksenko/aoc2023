@@ -13,7 +13,7 @@ defmodule AoC2023.Day01.Part2 do
     "six" => "6",
     "seven" => "7",
     "eight" => "8",
-    "nine" => "9",
+    "nine" => "9"
   }
 
   @impl AoC2023.Day
@@ -34,6 +34,7 @@ defmodule AoC2023.Day01.Part2 do
   end
 
   defp word_to_digit([]), do: []
+
   defp word_to_digit(input) do
     @translations
     |> Enum.reduce(input, &detect_word/2)
