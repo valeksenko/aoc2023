@@ -15,7 +15,7 @@ defmodule AoC2023.Day04.Part1 do
     |> Enum.sum()
   end
 
-  defp points({winnings, mine}) do
+  defp points({_id, winnings, mine}) do
     matches = MapSet.intersection(MapSet.new(winnings), MapSet.new(mine))
     if Enum.empty?(matches), do: 0, else: Integer.pow(2, MapSet.size(matches) - 1)
   end

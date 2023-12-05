@@ -29,5 +29,5 @@ defmodule AoC2023.Day04.Parser do
     |> to_card()
   end
 
-  defp to_card({:ok, [_id, winnings, mine], "", _, _, _}), do: {winnings, mine}
+  defp to_card({:ok, [id, winnings, mine], "", _, _, _}), do: {id, winnings, mine}
 end
