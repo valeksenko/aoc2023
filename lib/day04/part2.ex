@@ -15,28 +15,24 @@ defmodule AoC2023.Day04.Part2 do
   end
 
   defp points(cards) do
-    match(
-      Enum.map(cards, &elem(&1, 0)),
-      0,
-      cards |> Enum.reduce(Map.new(), fn {id, w, m}, c -> Map.put(c, id, {w, m}) end)
-    )
+    cardset = Enum.reduce(cards, Map.new(), fn {id, w, m}, c -> Map.put(c, id, {w, m}) end)
+    match(Map.from_keys(Map.keys(cardset), 1), 0, cardset)
   end
 
-  defp match([], count, _), do: count
+  defp match(cards, count, _) when cards == %{}, do: count
 
   defp match(cards, count, cardset) do
     cards
-    |> Enum.reduce([], fn card, new -> new ++ play(card, cardset[card]) end)
-    |> match(count + length(cards), cardset)
+    |> Enum.reduce(Map.new(), fn card, new -> play(card, new, cardset) end)
+    |> match(count + Enum.sum(Map.values(cards)), cardset)
   end
 
-  defp play(id, {winnings, mine}) do
-    (id + 1)
-    |> Stream.iterate(&(&1 + 1))
-    |> Enum.take(
-      MapSet.new(winnings)
-      |> MapSet.intersection(MapSet.new(mine))
-      |> MapSet.size()
-    )
+  defp play({id, amount}, cards, cardset) do
+    (id + 1)..(id + map_size(cardset))
+    |> Enum.take(point(cardset[id]))
+    |> Enum.reduce(cards, fn i, c -> Map.update(c, i, amount, &(&1 + amount)) end)
   end
+
+  defp point({winnings, mine}),
+    do: MapSet.new(winnings) |> MapSet.intersection(MapSet.new(mine)) |> MapSet.size()
 end
