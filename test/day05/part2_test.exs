@@ -5,6 +5,6 @@ defmodule AoC2023.Day05.Part2Test do
   import TestHelper
 
   test "runs for sample input" do
-    assert 46 == run(read_example_file(:Day05))
+    assert 46 == run(read_example_file(:day05))
   end
 end
