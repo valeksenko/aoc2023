@@ -8,11 +8,11 @@ defmodule AoC2023.Day06.Part2 do
 
   @impl AoC2023.Day
 
-  def run(data) do
+  def run(data, ratio \\ 4) do
     data
     |> parse_report()
     |> to_game()
-    |> wins()
+    |> wins(ratio)
   end
 
   defp to_game(data) do
@@ -23,9 +23,9 @@ defmodule AoC2023.Day06.Part2 do
     |> List.to_tuple()
   end
 
-  defp wins({time, distance}) do
+  defp wins({time, distance}, ratio) do
     # cheating, half time didn't work so manually found which one worked
-    split = div(time, 4)
+    split = div(time, ratio)
     right_left(split + 1, time - 1, time, distance) - left_left(1, split, time, distance)
   end
 

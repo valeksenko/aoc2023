@@ -3,7 +3,7 @@ defmodule AoC2023.Day08.Parser do
 
   new_line = ascii_string([?\n], 1)
   direction = ascii_string([?L, ?R], min: 1)
-  node = ascii_string([?A..?Z], 3)
+  node = ascii_string([?A..?Z, ?0..?9], 3)
 
   entry =
     node
