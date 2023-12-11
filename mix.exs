@@ -22,7 +22,8 @@ defmodule Aoc2023.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:nimble_parsec, "~> 1.4.0"}
+      {:nimble_parsec, "~> 1.4.0"},
+      {:eastar, "~> 0.5.1"}
     ]
   end
 
