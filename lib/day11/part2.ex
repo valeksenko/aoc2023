@@ -26,7 +26,7 @@ defmodule AoC2023.Day11.Part2 do
 
     galaxies
     |> Enum.reduce([], fn g, gs ->
-      [put_elem(g, axis, elem(g, axis) + (999999 * Enum.count(empty, &(&1 < elem(g, axis))))) | gs]
+      [put_elem(g, axis, elem(g, axis) + 999_999 * Enum.count(empty, &(&1 < elem(g, axis)))) | gs]
     end)
   end
 
