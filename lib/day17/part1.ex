@@ -35,7 +35,9 @@ defmodule AoC2023.Day17.Part1 do
     estimated_cost = fn _, _ -> 1 end
 
     next = fn {{pos, dir}, dirs, visited} ->
-      @directions[dir] |> Enum.map(fn d -> {move(pos, d), [d | dirs] |> Enum.take(4), [{pos, dir} | visited]} end) |> prune(visited, max_x, max_y)
+      @directions[dir]
+      |> Enum.map(fn d -> {move(pos, d), [d | dirs] |> Enum.take(4), [{pos, dir} | visited]} end)
+      |> prune(visited, max_x, max_y)
     end
 
     Astar.astar({next, cost, estimated_cost}, {{{0, 0}, :start}, [], []}, finish)
