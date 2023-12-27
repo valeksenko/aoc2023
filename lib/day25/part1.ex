@@ -8,49 +8,57 @@ defmodule AoC2023.Day25.Part1 do
 
   def run(data) do
     data
-    |> Enum.flat_map(&parse/1)
+    |> Enum.reduce(%{}, &parse/2)
     |> disconnect()
-    |> Enum.map(&MapSet.size/1)
+    |> Enum.map(&length/1)
     |> Enum.product()
   end
 
-  defp parse(input) do
-    [component, connected] = String.split(input, ": ")
+  defp parse(input, diagram) do
+    [component, constr] = String.split(input, ": ")
+    components = String.split(constr, " ")
 
-    connected
-    |> String.split(" ")
-    |> Enum.map(&[component, &1])
+    components
+    |> Enum.reduce(
+      Map.update(diagram, component, components, &(&1 ++ components)),
+      fn c, d -> Map.update(d, c, [component], &[component | &1]) end
+    )
   end
 
   defp disconnect(diagram) do
     diagram
+    |> Enum.flat_map(fn {c, cc} -> Enum.map(cc, &[c, &1]) end)
     |> combinations(3)
-    |> Enum.find(fn c -> length(connected(c, diagram)) == 2 end)
+    |> Enum.find(&(length(connected(&1, diagram)) == 2))
     |> connected(diagram)
   end
 
-  defp connected(breaks, wires) do
-    (wires -- breaks)
+  defp connected(breaks, diagram) do
+    breaks
+    |> Enum.reduce(diagram, fn [c1, c2], d ->
+      d |> Map.update!(c1, &List.delete(&1, c2)) |> Map.update!(c2, &List.delete(&1, c1))
+    end)
     |> connect([])
-    |> Enum.map(fn w -> w |> List.flatten() |> MapSet.new() end)
-    |> Enum.reduce([], &merge/2)
   end
 
-  defp connect([], groups), do: groups
+  defp connect(diagram, groups) when diagram == %{}, do: groups
 
-  defp connect([wire | wires], groups) do
-    case Enum.find_index(groups, &connected?(&1, wire)) do
-      nil -> connect(wires, [[wire] | groups])
-      i -> connect(wires, groups |> List.update_at(i, &[wire | &1]))
-    end
+  # optimization: stop earlier
+  defp connect(_, groups) when length(groups) == 2, do: [[] | groups]
+
+  defp connect(diagram, groups) do
+    {group, leftover} = group_connections(diagram |> Map.keys() |> hd(), {[], diagram})
+
+    connect(leftover, [group | groups])
   end
 
-  defp connected?(group, wire), do: Enum.any?(wire, fn c -> Enum.any?(group, &(c in &1)) end)
+  defp group_connections(component, {group, diagram}) do
+    case Map.pop(diagram, component) do
+      {nil, leftover} ->
+        {group, leftover}
 
-  defp merge(group, merged) do
-    case Enum.reject(merged, &MapSet.disjoint?(&1, group)) do
-      [] -> [group | merged]
-      joint -> [Enum.reduce(joint, group, &MapSet.union/2) | merged -- joint]
+      {components, leftover} ->
+        Enum.reduce(components, {[component | group], leftover}, &group_connections/2)
     end
   end
 
